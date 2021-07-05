@@ -1,0 +1,19 @@
+[package]
+name="sputnik"
+description="boilerplate rocket, async-graphql, sqlx"
+version="0.1.0"
+authors=["Keng Lim<lionkeng@gmail.com>"]
+edition="2018"
+
+[dependencies]
+anyhow = "1.0.40"
+async-trait = "0.1.50"
+async-graphql = { path = "../async-graphql" }
+async-graphql-rocket = { path = "../async-graphql/integrations/rocket" }
+deadpool = "0.8.0"
+dotenv = "0.15.0"
+rocket = { version = "0.5.0-rc.1", default-features = false }
+serde = "1.0.126"
+sqlx = { version = "0.5.5", features = [ "runtime-tokio-rustls", "postgres", "macros", "migrate", "uuid"] }
+strum = "0.21.0"
+strum_macros = "0.21.0"
