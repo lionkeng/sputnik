@@ -10,7 +10,7 @@ pub struct QueryRoot;
 #[derive(
   Clone, Copy, Debug, Deserialize, Display, Enum, Eq, EnumString, PartialEq, Serialize, sqlx::Type,
 )]
-#[sqlx(type_name = "starwars.enum_character_kind")]
+#[sqlx(type_name = "enum_character_kind")]
 pub enum CharacterKind {
   Human,
   Droid,
@@ -23,6 +23,7 @@ impl Default for CharacterKind {
   }
 }
 
+/*
 #[derive(SimpleObject, sqlx::FromRow, Debug)]
 #[graphql(complex)]
 pub struct Friend {
@@ -49,17 +50,6 @@ impl Friend {
     return Ok(None)
   }
 }
-
-/*
-impl Default for Friend {
-  fn default() -> Self {
-    Friend {
-      id: 0,
-      name: "nobody".to_string(),
-      kind: None,
-    }
-  }
-}
 */
 
 #[derive(SimpleObject, sqlx::FromRow)]
@@ -73,15 +63,15 @@ struct Character {
 
 #[ComplexObject]
 impl Character {
-  pub async fn friends(&self, ctx: &Context<'_>) -> FieldResult<Vec<Friend>> {
+  pub async fn friends(&self, ctx: &Context<'_>) -> FieldResult<Vec<Character>> {
     let pool = ctx.data::<Pool>().unwrap();
     let query_str = format!(
-      r#"SELECT id, name FROM starwars.characters
+      r#"SELECT id, name, kind FROM starwars.characters
       JOIN starwars.friends ON starwars.friends.friend_id = id AND
       starwars.friends.character_id = {}"#,
       self.id
     );
-    let result = sqlx::query_as::<_, Friend>(query_str.as_str())
+    let result = sqlx::query_as::<_, Character>(query_str.as_str())
       .fetch_all(pool.get().await.unwrap().deref_mut())
       .await
       .unwrap();
