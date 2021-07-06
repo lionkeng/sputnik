@@ -39,7 +39,6 @@ impl Character {
       .fetch_all(pool.get().await.unwrap().deref_mut())
       .await
       .unwrap();
-    println!("{:?}", result);
     return Ok(result);
   }
 }
