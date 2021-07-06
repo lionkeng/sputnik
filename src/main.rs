@@ -1,5 +1,5 @@
 extern crate anyhow;
-use std::{env, ops::DerefMut};
+use std::env;
 
 use async_graphql::{
   http::{playground_source, GraphQLPlaygroundConfig},
@@ -9,41 +9,34 @@ use async_graphql_rocket::{Query, Request, Response};
 use dotenv::dotenv;
 use rocket::{response::content, routes, State};
 
-// use starwars::{QueryRoot, StarWars};
 mod db;
 mod models;
 
 use db::{Pool, PoolManager};
 
-use models::{CharacterKind, QueryRoot, Friend};
-use sqlx::{Row, postgres::PgRow};
+use models::{QueryRoot};
 
 pub type MySchema = Schema<QueryRoot, EmptyMutation, EmptySubscription>;
+
+#[derive(Debug, sqlx::Type)]
+#[sqlx(type_name = "enum_character_kind")]
+pub enum MyCharacterKind {
+  Droid,
+  Human,
+  Wookie,
+}
+
+#[derive(Debug)]
+pub struct MyCharacter {
+  pub id: i32,
+  pub name: String,
+  pub kind: MyCharacterKind,
+}
 
 #[rocket::get("/hello")]
 async fn hello(_schema: &State<MySchema>) -> String {
   "🚀 says hello!".to_string()
 }
-
-/*
-#[rocket::get("/friends")]
-async fn friends(_schema: &State<MySchema>, pool: &State<Pool>) -> String {
-    let query_str = format!(
-      r#"SELECT id, name FROM starwars.characters
-      JOIN starwars.friends ON starwars.friends.friend_id = id AND
-      starwars.friends.character_id = {}"#,
-      1
-    );
-    let friends = sqlx::query_as::<_, Friend>(query_str.as_str())
-    .fetch_all(pool.get().await.unwrap().deref_mut())
-    .await
-    .unwrap();
-  let results = format!("{:?}", friends);
-  return results;
-  // println!("{:?}", friends);
-  // "hello friends!".to_string()
-}
-*/
 
 #[rocket::get("/")]
 fn graphql_playground() -> content::Html<String> {
@@ -71,17 +64,15 @@ async fn main() {
     .finish();
   rocket::build()
     .manage(schema)
- //   .manage(db_pool)
     .mount(
       "/",
       routes![
         graphql_query,
         graphql_request,
         graphql_playground,
-        hello,
+        hello
       ],
     )
-    //    .attach(db::stage_database())
     .launch()
     .await
     .unwrap();
