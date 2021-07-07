@@ -18,21 +18,6 @@ use models::{QueryRoot};
 
 pub type MySchema = Schema<QueryRoot, EmptyMutation, EmptySubscription>;
 
-#[derive(Debug, sqlx::Type)]
-#[sqlx(type_name = "enum_character_kind")]
-pub enum MyCharacterKind {
-  Droid,
-  Human,
-  Wookie,
-}
-
-#[derive(Debug)]
-pub struct MyCharacter {
-  pub id: i32,
-  pub name: String,
-  pub kind: MyCharacterKind,
-}
-
 #[rocket::get("/hello")]
 async fn hello(_schema: &State<MySchema>) -> String {
   "🚀 says hello!".to_string()
