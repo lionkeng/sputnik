@@ -1,6 +1,6 @@
 # sputnik
 
-This repo demonstrates how to setup a Rust micro-service using Rocket, async-graphql, and sqlx. For some background on this, go [here]().
+This repo demonstrates how to setup a Rust micro-service using Rocket, async-graphql, and sqlx. For some background on this, go [here](https://lionkeng.medium.com/how-to-implement-a-rust-micro-service-using-rocket-graphql-postgresql-a3f455f2ae8b).
 
 *Note: This repo assumes you have some familiarity with Rust, graphQL, and SQL.*
 # Installation Steps
